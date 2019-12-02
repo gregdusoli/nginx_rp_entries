@@ -12,26 +12,29 @@ echo "(2) SAIR"
 read option
 
 if [ $option == 1 ]; then
-  echo -e " ########################################"
-  echo -e "|                 AVISO                  |"
-  echo -e "|  Antes de criar este redirecionamento  |"
-  echo -e "|  é necessário criar o apontamento DNS  |"
-  echo -e " ########################################\n"
-  echo -e "\nQual o subdomain desejado? (FQDN = subdomain.eqi.life)"
+  echo -e "  ##############################################"
+  echo -e " |                    AVISO                     |"
+  echo -e " |______________________________________________|"  
+  echo -e " |     Antes de criar este redirecionamento     |"
+  echo -e " |     é necessário criar o apontamento DNS     |"
+  echo -e "  ##############################################\n"
+  echo -e "\nInforme o dominio do host desejado (ex. cnn.com):"
+  read domain
+  echo -e "\nInforme o subdominio desejado (FQDN = subdominio.$domain):"
   read subdomain
 
   echo -e "\nPara qual porta devo redirecionar as requests?"
   read port
 
   echo -e "\nO seguinte redirecionamento será criado:"
-  echo " FQDN: $subdomain.eqi.life"
+  echo " FQDN: $subdomain.$domain"
   echo " Porta: $port"
   echo -e "\nConfirma a criação do item? [S|n]"
   read confirm
 
   if [[ "$confirm" =~ [sS] ]]; then
     # Cria o arquivo do apontamento e faz restart no server
-    filename="$subdomain.conf"
+    filename="$subdomain.$domain.conf"
 
     cd /etc/nginx/conf.d
     touch $(echo "$filename")
@@ -40,7 +43,7 @@ if [ $option == 1 ]; then
   listen 80;
   listen [::]:80;
 
-  server_name  $subdomain.eqi.life;
+  server_name  $subdomain.$domain;
 
   location / {
     proxy_pass http://localhost:$port/;
